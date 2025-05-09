@@ -1,6 +1,6 @@
 local M = {}
 
-local diagflowlazy = require('diagflow.lazy')
+local diagmininotifylazy = require('diagmininotify.lazy')
 
 M.config = {
     enable = true,
@@ -46,76 +46,76 @@ function M.setup(user_config)
 
     local config = M.config
     if type(config.update_event) ~= 'table' then
-        error('diagflow: Invalid type for "update_event" config. Expected table, got ' .. type(config.update_event))
+        error('diagmininotify: Invalid type for "update_event" config. Expected table, got ' .. type(config.update_event))
         return
     end
     if type(config.toggle_event) ~= 'table' then
-        error('diagflow: Invalid type for "toggle_event" config. Expected table, got ' .. type(config.toggle_event))
+        error('diagmininotify: Invalid type for "toggle_event" config. Expected table, got ' .. type(config.toggle_event))
         return
     end
     if type(config.render_event) ~= 'table' then
-        error('diagflow: Invalid type for "toggle_event" config. Expected table, got ' .. type(config.render_event))
+        error('diagmininotify: Invalid type for "toggle_event" config. Expected table, got ' .. type(config.render_event))
         return
     end
     if type(config.format) ~= 'function' then
-        error('diagflow: Invalid type for "format" config. Expected function, got ' .. type(config.format))
+        error('diagmininotify: Invalid type for "format" config. Expected function, got ' .. type(config.format))
         return
     end
     if type(config.enable) ~= 'boolean' and type(config.enable) ~= 'function' then
-        error('diagflow: Invalid type for "enable" config. Expected boolean or function, got ' .. type(config.enable))
+        error('diagmininotify: Invalid type for "enable" config. Expected boolean or function, got ' .. type(config.enable))
         return
     end
     if type(config.max_width) ~= 'number' then
-        error('diagflow: Invalid type for "max_width" config. Expected number, got ' .. type(config.max_width))
+        error('diagmininotify: Invalid type for "max_width" config. Expected number, got ' .. type(config.max_width))
         return
     end
     if type(config.max_height) ~= 'number' then
-        error('diagflow: Invalid type for "max_height" config. Expected number, got ' .. type(config.max_height))
+        error('diagmininotify: Invalid type for "max_height" config. Expected number, got ' .. type(config.max_height))
         return
     end
     if type(config.severity_colors) ~= 'table' then
-        error('diagflow: Invalid type for "severity_colors" config. Expected table, got ' .. type(config.severity_colors))
+        error('diagmininotify: Invalid type for "severity_colors" config. Expected table, got ' .. type(config.severity_colors))
         return
     end
     if type(config.gap_size) ~= 'number' then
-        error('diagflow: Invalid type for "gap_size" config. Expected number, got ' .. type(config.gap_size))
+        error('diagmininotify: Invalid type for "gap_size" config. Expected number, got ' .. type(config.gap_size))
         return
     end
     if type(config.scope) ~= 'string' or (config.scope ~= 'line' and config.scope ~= 'cursor') then
-        error('diagflow: invalid value for "scope" config. expected "line" or "cursor", got ' .. config.scope)
+        error('diagmininotify: invalid value for "scope" config. expected "line" or "cursor", got ' .. config.scope)
         return
     end
     if type(config.placement) ~= 'string' or (config.placement ~= 'top' and config.placement ~= 'inline') then
-        error('diagflow: invalid value for "placement" config. expected "top" or "inline", got ' .. config.placement)
+        error('diagmininotify: invalid value for "placement" config. expected "top" or "inline", got ' .. config.placement)
         return
     end
     if type(config.padding_top) ~= 'number' then
-        error('diagflow: Invalid type for "padding_top" config. Expected number, got ' .. type(config.padding_top))
+        error('diagmininotify: Invalid type for "padding_top" config. Expected number, got ' .. type(config.padding_top))
         return
     end
     if type(config.padding_right) ~= 'number' then
-        error('diagflow: Invalid type for "padding_right" config. Expected number, got ' .. type(config.padding_right))
+        error('diagmininotify: Invalid type for "padding_right" config. Expected number, got ' .. type(config.padding_right))
         return
     end
     if type(config.inline_padding_left) ~= 'number' then
-        error('diagflow: Invalid type for "inline_padding_left" config. Expected number, got ' ..
+        error('diagmininotify: Invalid type for "inline_padding_left" config. Expected number, got ' ..
         type(config.inline_padding_left))
         return
     end
     if type(config.text_align) ~= 'string' or (config.text_align ~= 'left' and config.text_align ~= 'right') then
-        error('diagflow: Invalid value for "text_align" config. Expected "left" or "right", got ' .. config.text_align)
+        error('diagmininotify: Invalid value for "text_align" config. Expected "left" or "right", got ' .. config.text_align)
         return
     end
     if type(config.show_borders) ~= 'boolean' then
-        error('diagflow: Invalid value for "show_borders" config. Expected true or false, got ' .. config.show_border)
+        error('diagmininotify: Invalid value for "show_borders" config. Expected true or false, got ' .. config.show_border)
         return
     end
     if type(config.border_chars) ~= 'table' then
-        error('diagflow: Invalid type for "border_chars" config. Expected table, got ' .. type(config.border_chars))
+        error('diagmininotify: Invalid type for "border_chars" config. Expected table, got ' .. type(config.border_chars))
         return
     end
 
-    diagflowlazy.init(M.config)
+    diagmininotifylazy.init(M.config)
 end
 
 function M.toggle()
@@ -128,11 +128,11 @@ function M.toggle()
 end
 
 function M.enable()
-    diagflowlazy.init(M.config)
+    diagmininotifylazy.init(M.config)
 end
 
 function M.disable()
-    diagflowlazy.clear()
+    diagmininotifylazy.clear()
 end
 
 return M
