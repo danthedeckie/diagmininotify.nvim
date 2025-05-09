@@ -9,7 +9,6 @@ local function len(T)
 end
 
 local group = nil
-local ns = nil
 
 local error = function(message)
     vim.notify(message, vim.log.levels.ERROR)
@@ -19,7 +18,7 @@ M.cached = {}
 M.notifications = {}
 
 local function update_cached_diagnostic()
-	local bufnr = vim.api.nvim_get_current_buf()
+    local bufnr = vim.api.nvim_get_current_buf()
     local ok, diagnostics = pcall(vim.diagnostic.get, bufnr)
 
     if not ok then
@@ -51,8 +50,6 @@ end
 function M.init(config)
     vim.diagnostic.config({ virtual_text = false })
     M.config = config
-
-    ns = vim.api.nvim_create_namespace("DiagnosticsHighlight")
 
     local signs = (function()
       local signs = {}
@@ -94,17 +91,12 @@ function M.init(config)
             return
         end
 
-        local bufnr = 0 -- current buffer
 
-        -- Clear existing extmarks
-        vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
-
+        -- Clear existing diagnostic notifications
         for k, notif in ipairs(M.notifications) do
             MiniNotify.remove(notif)
             M.notifications[k] = nil
         end
-
-        local win_info = vim.fn.getwininfo(vim.fn.win_getid())[1]
 
         local diags = M.cached[vim.api.nvim_get_current_buf()] or {}
 
@@ -128,7 +120,6 @@ function M.init(config)
             [vim.diagnostic.severity.HINT] = 'DEBUG',
         }
 
-
         local hl_group_lookup = {
             [vim.diagnostic.severity.ERROR] = 'DiagnosticError',
             [vim.diagnostic.severity.WARN] = 'DiagnosticWarn',
@@ -142,7 +133,6 @@ function M.init(config)
 
             local level = notification_level_lookup[diag.severity]
             local hl_group = hl_group_lookup[diag.severity]
-            local sign = config.show_sign and signs[vim.diagnostic.severity[diag.severity]] .. " " or ""
 
             table.insert(M.notifications, MiniNotify.add(diag_message, level, hl_group, {source='lsp_diagnostic'}))
 
@@ -150,10 +140,8 @@ function M.init(config)
     end
     local function toggle()
         M.config.enable = not M.config.enable
-        vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
     end
 
-    group = vim.api.nvim_create_augroup('RenderDiagnostics', { clear = true })
     if len(config.toggle_event) > 0 then
         vim.api.nvim_create_autocmd(config.toggle_event, {
             callback = toggle,
@@ -173,18 +161,12 @@ function M.init(config)
         group = group
     })
 
-	vim.api.nvim_create_autocmd('BufDelete', {
-		group = group,
-		callback = function(ev) M.cached[ev.buf] = nil end,
-	})
+    vim.api.nvim_create_autocmd('BufDelete', {
+        group = group,
+        callback = function(ev) M.cached[ev.buf] = nil end,
+    })
 
     update_cached_diagnostic()
 end
-
-function M.clear()
-    pcall(function() vim.api.nvim_del_augroup_by_name('RenderDiagnostics') end)
-    pcall(function() vim.api.nvim_buf_clear_namespace(0, ns, 0, -1) end)
-end
-
 
 return M

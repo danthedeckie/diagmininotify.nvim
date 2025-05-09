@@ -13,7 +13,7 @@ M.config = {
         hint = "DiagnosticFloatingHint",
     },
     format = function(diagnostic)
-        return diagnostic.message
+        return  diagnostic.message .. ' (' .. diagnostic.source .. ')'
     end,
     show_sign = false,
     gap_size = 1,
