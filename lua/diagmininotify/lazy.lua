@@ -51,26 +51,17 @@ function M.init(config)
     vim.diagnostic.config({ virtual_text = false })
     M.config = config
 
-    local signs = (function()
-      local signs = {}
-      local type_diagnostic = vim.diagnostic.severity
-      for _, severity in ipairs(type_diagnostic) do
-        local status, sign = pcall(function()
-          return vim.trim(
-            vim.fn.sign_getdefined(
-              "DiagnosticSign" .. severity:lower():gsub("^%l", string.upper)
-            )[1].text
-          )
-        end)
-        if not status then
-          sign = severity:sub(1, 1)
+    local function clear_diagnostics()
+        -- Clear existing diagnostic notifications
+        for k, notif in ipairs(M.notifications) do
+            MiniNotify.remove(notif)
+            M.notifications[k] = nil
         end
-        signs[severity] = sign
-      end
-      return signs
-    end)()
+    end
 
     local function render_diagnostics()
+        clear_diagnostics()
+
         if type(M.config.enable) == "function" then
             if not M.config.enable() then
                 return
@@ -91,12 +82,6 @@ function M.init(config)
             return
         end
 
-
-        -- Clear existing diagnostic notifications
-        for k, notif in ipairs(M.notifications) do
-            MiniNotify.remove(notif)
-            M.notifications[k] = nil
-        end
 
         local diags = M.cached[vim.api.nvim_get_current_buf()] or {}
 
@@ -140,6 +125,7 @@ function M.init(config)
     end
     local function toggle()
         M.config.enable = not M.config.enable
+        render_diagnostics()
     end
 
     if len(config.toggle_event) > 0 then
